@@ -1,10 +1,9 @@
-import logo from './logo.svg';
-import './App.css';
+import TelaCadastroProduto from "./Telas/TelaCadastroProduto";
 
 function App() {
   return (
     <div className="App">
-      < />
+      <TelaCadastroProduto />
     </div>
   );
 }
