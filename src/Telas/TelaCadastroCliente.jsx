@@ -1,6 +1,6 @@
 import { Container } from "react-bootstrap";
 import Pagina from "../templates/Pagina";
-import FormCadCliente from "./Formularios/FormCadCliente";
+import FormCadCliente from "./Formularios/FormCadProduto";
 
 export default function TelaCadastroCliente(props) {
     return (
