@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import TelaCadastroCliente from "./Telas/TelaCadastroCliente";
 import TelaCadastroFornecedor from "./Telas/TelaCadastroFornecedor";
 import TelaCadastroProduto from "./Telas/TelaCadastroProduto";
@@ -11,36 +11,33 @@ export const ContextoUsuario = createContext();
 
 function App() {
   const [usuario, setUsuario] = useState({
-    "email": "admin@admin",
-    "logado": false
+    email: "",
+    logado: false
   });
 
-  if(usuario.logado) {
-    return (
-      <div className="App">   
-        <ContextoUsuario.Provider value={usuario}>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/cadastro-produto" element={<TelaCadastroProduto />} />
-              <Route path="/cadastro-fornecedor" element={<TelaCadastroFornecedor />} />
-              <Route path="/cadastro-cliente" element={<TelaCadastroCliente />} />
-              <Route path="/" element={<TelaMenu />} />
+  return (
+    <ContextoUsuario.Provider value={{ usuario, setUsuario }}>
+      <BrowserRouter>
+        <Routes>
+          {usuario.logado ? (
+            <>
+              <Route path="/menu" element={<TelaMenu />} />
+              <Route path="/produto" element={<TelaCadastroProduto />} />
+              <Route path="/fornecedor" element={<TelaCadastroFornecedor />} />
+              <Route path="/cliente" element={<TelaCadastroCliente />} />
               <Route path="*" element={<Tela404 />} />
-            </Routes>
-          </BrowserRouter>
-        </ContextoUsuario.Provider>
-      </div>
-    );
-  }
-  else {
-    return (
-      <div className="App">   
-        <ContextoUsuario.Provider value={{usuario, setUsuario}}>
-          <TelaLogin />
-        </ContextoUsuario.Provider>
-      </div>
-    )
-  }
+              <Route path="/" element={<Navigate to="/menu" />} />
+            </>
+          ) : (
+            <>
+              <Route path="/login" element={<TelaLogin />} />
+              <Route path="*" element={<Navigate to="/login" />} />
+            </>
+          )}
+        </Routes>
+      </BrowserRouter>
+    </ContextoUsuario.Provider>
+  );
 }
 
 export default App;

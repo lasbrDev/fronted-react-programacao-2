@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { Container, Nav, Navbar, NavbarText, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { ContextoUsuario } from "../App";
 
@@ -14,7 +14,7 @@ export default function Menu(props) {
                     <Nav className="me-auto">
                         <NavDropdown title="Cadastros" id="basic-nav-dropdown">
                             <NavDropdown.Item href="#" as={Link} to={"/cliente"}>Clientes</NavDropdown.Item>
-                            <NavDropdown.Item href="#" as={Link} to={"/cadastrar"}>Produtos</NavDropdown.Item>
+                            <NavDropdown.Item href="#" as={Link} to={"/produto"}>Produtos</NavDropdown.Item>
                             <NavDropdown.Item href="#" as={Link} to={"/fornecedor"}>Fornecedores</NavDropdown.Item>
                         </NavDropdown>
                         <Nav.Link href="#" onClick={() => {
@@ -24,6 +24,9 @@ export default function Menu(props) {
                             });
                         }}>Sair</Nav.Link>
                     </Nav>
+                    <NavbarText className="ms-auto">
+                        Logado como: {usuario.email || "Visitante"}
+                    </NavbarText>
                 </Navbar.Collapse>
             </Container>
         </Navbar>
