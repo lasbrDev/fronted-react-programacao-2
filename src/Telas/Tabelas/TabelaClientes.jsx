@@ -13,7 +13,6 @@ export default function TabelaClientes(props) {
                 return cliente.cpf !== cpf;
             });
             props.setListaClientes(listaNova);
-
         }
     }
 
