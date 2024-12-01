@@ -54,7 +54,7 @@ export default function FormularioCadCliente(props) {
                         alert(resposta.mensagem);
                     }
                 }).catch((erro) => {
-                    alert("Não foi possível se comunicar com o backend: " + erro.message);
+                    alert("Não foi possível se comunicar com o servidor: " + erro.message);
                 });
             }
         } else {

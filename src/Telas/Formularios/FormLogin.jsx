@@ -26,8 +26,9 @@ export default function FormLogin(props) {
   }  
    
   return (
-    <Container className="border m-2 p-2">
-      <Form onSubmit={efetuarLogin}>
+    <Container className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+      <Form onSubmit={efetuarLogin} className="w-50 border p-4 shadow">
+        <h2 className="text-center mb-4">Login</h2>
         <Form.Group className="mb-3" controlId="email">
           <Form.Label>Email</Form.Label>
           <Form.Control type="email" placeholder="email" ref={emailRef} />
@@ -39,7 +40,7 @@ export default function FormLogin(props) {
           <Form.Label>Senha</Form.Label>
           <Form.Control type="password" placeholder="Digite sua senha" ref={senhaRef} />
         </Form.Group>
-        <Button variant="primary" type="submit">Login</Button>
+        <Button variant="primary" type="submit" className="w-100">Login</Button>
       </Form>
     </Container>
   );
