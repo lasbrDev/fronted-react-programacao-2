@@ -16,7 +16,7 @@ export default function FormLogin(props) {
     const email = emailRef.current.value;
     const senha = senhaRef.current.value;
 
-    if (email === 'admin@admin.com' && senha === 'admin123') {
+    if (email === 'admin@admin.com' && senha === 'admin@123') {
       setUsuario({
         email: email,
         logado: true

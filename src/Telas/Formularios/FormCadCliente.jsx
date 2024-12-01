@@ -1,44 +1,65 @@
+import { useState, useEffect } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { useState } from "react";
+import { atualizarCliente, cadastrarCliente } from "../../services/clienteService";
 
-export default function FormCadCliente(props) {
+export default function FormularioCadCliente(props) {
     const [cliente, setCliente] = useState(props.clienteSelecionado);
-
     const [validado, setValidado] = useState(false);
 
-    function atualizarCliente(evento) {
+    useEffect(() => {
+        setCliente(props.clienteSelecionado);
+    }, [props.clienteSelecionado]);
+
+    function alterarCliente(evento) {
         const nome = evento.target.name;
         const valor = evento.target.value;
         setCliente({ ...cliente, [nome]: valor });
     }
 
     function cadastrar(evento) {
-        const formulario = evento.currentTarget; 
+        evento.preventDefault();
+        const formulario = evento.currentTarget;
         if (formulario.checkValidity()) {
             setValidado(false);
             if (!props.modoEdicao) {
-                props.listaClientes.push(cliente);
-                props.setExibirTabela(true);
-            }
-            else{
-                const indice = props.listaClientes.findIndex((cli) => { return cli.cpf === cliente.cpf });
-                props.listaClientes[indice] = cliente;
-                props.setModoEdicao(false);
-                props.setClienteSelecionado({
-                    cpf: "",
-                    nomeCompleto: "",
-                    endereco: "",
-                    cidade: "",
-                    estado: "",
-                    cep: "",
+                cadastrarCliente(cliente).then((resposta) => {
+                    if (resposta.status) {
+                        props.atualizarListaClientes([...props.listaClientes, resposta.cliente]);
+                        props.setExibirTabela(true);
+                    } else {
+                        alert(resposta.mensagem);
+                    }
+                }).catch((erro) => {
+                    alert("Não foi possível se comunicar com o servidor:" + erro.message);
                 });
-                props.setExibirTabela(true);
+            } else {
+                atualizarCliente(cliente).then((resposta) => {
+                    if (resposta.status) {
+                        const listaAtualizada = props.listaClientes.map(cli => 
+                            cli.id === cliente.id ? resposta.cliente : cli
+                        );
+                        props.atualizarListaClientes(listaAtualizada);
+                        props.setModoEdicao(false);
+                        props.setClienteSelecionado({
+                            id: "",
+                            cpf: "",
+                            nomeCompleto: "",
+                            endereco: "",
+                            cidade: "",
+                            estado: "",
+                            cep: "",
+                        });
+                        props.setExibirTabela(true);
+                    } else {
+                        alert(resposta.mensagem);
+                    }
+                }).catch((erro) => {
+                    alert("Não foi possível se comunicar com o backend: " + erro.message);
+                });
             }
-        }
-        else {
+        } else {
             setValidado(true);
         }
-        evento.preventDefault();
         evento.stopPropagation();
     }
 
@@ -54,7 +75,7 @@ export default function FormCadCliente(props) {
                         value={cliente.cpf}
                         id="cpf"
                         name="cpf"
-                        onChange={atualizarCliente}
+                        onChange={alterarCliente}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe o CPF!</Form.Control.Feedback>
                 </Form.Group>
@@ -66,10 +87,10 @@ export default function FormCadCliente(props) {
                         required
                         type="text"
                         placeholder="Nome Completo"
+                        value={cliente.nomeCompleto}
                         id="nomeCompleto"
                         name="nomeCompleto"
-                        onChange={atualizarCliente}
-                        value={cliente.nomeCompleto}
+                        onChange={alterarCliente}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe o nome completo!</Form.Control.Feedback>
                 </Form.Group>
@@ -84,7 +105,7 @@ export default function FormCadCliente(props) {
                         value={cliente.endereco}
                         id="endereco"
                         name="endereco"
-                        onChange={atualizarCliente}
+                        onChange={alterarCliente}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe o endereço!</Form.Control.Feedback>
                 </Form.Group>
@@ -93,49 +114,45 @@ export default function FormCadCliente(props) {
                 <Form.Group as={Col} md="6">
                     <Form.Label>Cidade:</Form.Label>
                     <Form.Control
+                        required
                         type="text"
                         placeholder="Cidade"
                         value={cliente.cidade}
-                        required
                         id="cidade"
                         name="cidade"
-                        onChange={atualizarCliente} />
-                    <Form.Control.Feedback type="invalid">
-                        Por favor, informe a cidade.
-                    </Form.Control.Feedback>
+                        onChange={alterarCliente}
+                    />
+                    <Form.Control.Feedback type="invalid">Por favor, informe a cidade!</Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} md="3">
                     <Form.Label>Estado:</Form.Label>
                     <Form.Control
-                        type="text"
-                        placeholder="State"
                         required
+                        type="text"
+                        placeholder="Estado"
                         value={cliente.estado}
                         id="estado"
                         name="estado"
-                        onChange={atualizarCliente} />
-                    <Form.Control.Feedback type="invalid">
-                        Por favor, informe o estado.
-                    </Form.Control.Feedback>
+                        onChange={alterarCliente}
+                    />
+                    <Form.Control.Feedback type="invalid">Por favor, informe o estado!</Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} md="3">
-                    <Form.Label>Cep:</Form.Label>
+                    <Form.Label>CEP:</Form.Label>
                     <Form.Control
+                        required
                         type="text"
-                        placeholder="Cep"
+                        placeholder="CEP"
                         value={cliente.cep}
                         id="cep"
                         name="cep"
-                        onChange={atualizarCliente}
-                        required />
-                    <Form.Control.Feedback type="invalid">
-                        Por favor, informe o CEP!
-                    </Form.Control.Feedback>
+                        onChange={alterarCliente}
+                    />
+                    <Form.Control.Feedback type="invalid">Por favor, informe o CEP!</Form.Control.Feedback>
                 </Form.Group>
             </Row>
-            <Button type="submit">{ props.modoEdicao ? "Atualizar" : "Cadastrar" }</Button> <Button variant="secondary" type="button" onClick={() => {
-                props.setExibirTabela(true);
-            }}>Voltar</Button>
+            <Button type="submit" className="me-2">{props.modoEdicao ? "Atualizar" : "Cadastrar"}</Button> 
+            <Button variant="secondary" type="button" onClick={() => props.setExibirTabela(true)}>Voltar</Button>
         </Form>
     );
 }

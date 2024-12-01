@@ -1,43 +1,40 @@
 import { createContext, useState } from "react";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import TelaCadastroCliente from "./Telas/TelaCadastroCliente";
-import TelaCadastroFornecedor from "./Telas/TelaCadastroFornecedor";
-import TelaCadastroProduto from "./Telas/TelaCadastroProduto";
-import TelaLogin from "./Telas/TelaLogin";
-import TelaMenu from "./Telas/TelaMenu";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import Clientes from "./Telas/TelaCadastroCliente";
+import Fornecedores from "./Telas/TelaCadastroFornecedor";
+import Login from "./Telas/Formularios/FormLogin";
+import Menu from "./Telas/TelaMenu";
+import Produtos from "./Telas/TelaCadastroProduto";
 import Tela404 from "./Telas/Tela404";
+
 
 export const ContextoUsuario = createContext();
 
 function App() {
-  const [usuario, setUsuario] = useState({
-    email: "",
-    logado: false
-  });
+    const [usuario, setUsuario] = useState({
+        email: "admin@admin.com",
+        logado: false
+    });
+    
+    const RotaProteginda = ({ children }) => {
+        return usuario.logado ? children : <Navigate to="/login" />
+    };
 
-  return (
-    <ContextoUsuario.Provider value={{ usuario, setUsuario }}>
-      <BrowserRouter>
-        <Routes>
-          {usuario.logado ? (
-            <>
-              <Route path="/menu" element={<TelaMenu />} />
-              <Route path="/produto" element={<TelaCadastroProduto />} />
-              <Route path="/fornecedor" element={<TelaCadastroFornecedor />} />
-              <Route path="/cliente" element={<TelaCadastroCliente />} />
-              <Route path="*" element={<Tela404 />} />
-              <Route path="/" element={<Navigate to="/menu" />} />
-            </>
-          ) : (
-            <>
-              <Route path="/login" element={<TelaLogin />} />
-              <Route path="*" element={<Navigate to="/login" />} />
-            </>
-          )}
-        </Routes>
-      </BrowserRouter>
-    </ContextoUsuario.Provider>
-  );
-}
+    return (
+        <ContextoUsuario.Provider value={{ usuario, setUsuario }}>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/menu" element={<RotaProteginda><Menu /></RotaProteginda>} />
+                    <Route path="/produto" element={<RotaProteginda><Produtos /></RotaProteginda>} />
+                    <Route path="/fornecedor" element={<RotaProteginda><Fornecedores /></RotaProteginda>} />
+                    <Route path="/cliente" element={<RotaProteginda><Clientes /></RotaProteginda>} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/" element={<Navigate to={usuario.logado ? "/menu" : "/login"} />} />
+                    <Route path="*"  element={<Tela404 />} />
+                </Routes>
+            </BrowserRouter>
+        </ContextoUsuario.Provider>
+    ); 
+};
 
 export default App;

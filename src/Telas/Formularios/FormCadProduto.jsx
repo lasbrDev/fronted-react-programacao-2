@@ -1,44 +1,57 @@
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useState } from "react";
+import { cadastrarProduto, atualizarProduto } from "../../services/produtoService"
 
 export default function FormCadProduto(props) {
     const [produto, setProduto] = useState(props.produtoSelecionado);
     const [validado, setValidado] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    function atualizarProduto(evento) {
+    function atualizarProdutoState(evento) {
         const { name, value } = evento.target;
         setProduto({ ...produto, [name]: value });
     }
 
-    function cadastrar(evento) {
+    async function cadastrar(evento) {
+        evento.preventDefault();
+        evento.stopPropagation();
+
         const formulario = evento.currentTarget;
         if (formulario.checkValidity()) {
             setValidado(false);
-            if (!props.modoEdicao) {
-                props.listaProdutos.push(produto);
-                props.setExibirTabela(true);
-            } else {
-                const indice = props.listaProdutos.findIndex(prod => prod.codigo === produto.codigo);
-                props.listaProdutos[indice] = produto;
-                props.setModoEdicao(false);
-                props.setProdutoSelecionado({
-                    codigo: "",
-                    nome: "",
-                    preco: "",
-                    categoria: "",
-                    estoque: "",
-                });
-                props.setExibirTabela(true);
+            setLoading(true);
+            try {
+                if (!props.modoEdicao) {
+                    // Cadastrar um novo produto
+                    await cadastrarProduto(produto);
+                    props.setExibirTabela(true);
+                } else {
+                    // Atualizar um produto existente
+                    await atualizarProduto(produto);
+                    props.setModoEdicao(false);
+                    props.setProdutoSelecionado({
+                        codigo: "",
+                        nome: "",
+                        preco: "",
+                        categoria: "",
+                        estoque: "",
+                    });
+                    props.setExibirTabela(true);
+                }
+            } catch (erro) {
+                setError("Erro ao salvar o produto. Tente novamente mais tarde.");
+            } finally {
+                setLoading(false);
             }
         } else {
             setValidado(true);
         }
-        evento.preventDefault();
-        evento.stopPropagation();
     }
 
     return (
         <Form validated={validado} className="border p-2" noValidate onSubmit={cadastrar}>
+            {error && <div className="alert alert-danger">{error}</div>}
             <Row className="mb-3">
                 <Form.Group as={Col} md="4">
                     <Form.Label>Código:</Form.Label>
@@ -48,7 +61,7 @@ export default function FormCadProduto(props) {
                         placeholder="Código"
                         value={produto.codigo}
                         name="codigo"
-                        onChange={atualizarProduto}
+                        onChange={atualizarProdutoState}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe o código!</Form.Control.Feedback>
                 </Form.Group>
@@ -62,7 +75,7 @@ export default function FormCadProduto(props) {
                         placeholder="Nome"
                         value={produto.nome}
                         name="nome"
-                        onChange={atualizarProduto}
+                        onChange={atualizarProdutoState}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe o nome!</Form.Control.Feedback>
                 </Form.Group>
@@ -77,7 +90,7 @@ export default function FormCadProduto(props) {
                         placeholder="Preço"
                         value={produto.preco}
                         name="preco"
-                        onChange={atualizarProduto}
+                        onChange={atualizarProdutoState}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe o preço!</Form.Control.Feedback>
                 </Form.Group>
@@ -89,7 +102,7 @@ export default function FormCadProduto(props) {
                         placeholder="Categoria"
                         value={produto.categoria}
                         name="categoria"
-                        onChange={atualizarProduto}
+                        onChange={atualizarProdutoState}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe a categoria!</Form.Control.Feedback>
                 </Form.Group>
@@ -103,13 +116,17 @@ export default function FormCadProduto(props) {
                         placeholder="Estoque"
                         value={produto.estoque}
                         name="estoque"
-                        onChange={atualizarProduto}
+                        onChange={atualizarProdutoState}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe a quantidade em estoque!</Form.Control.Feedback>
                 </Form.Group>
             </Row>
-            <Button type="submit">{props.modoEdicao ? "Atualizar" : "Cadastrar"}</Button>{" "}
-            <Button variant="secondary" onClick={() => props.setExibirTabela(true)}>Voltar</Button>
+            <Button type="submit" disabled={loading}>
+                {loading ? "Carregando..." : props.modoEdicao ? "Atualizar" : "Cadastrar"}
+            </Button>{" "}
+            <Button variant="secondary" onClick={() => props.setExibirTabela(true)}>
+                Voltar
+            </Button>
         </Form>
     );
 }
