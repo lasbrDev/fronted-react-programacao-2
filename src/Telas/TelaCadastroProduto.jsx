@@ -14,6 +14,7 @@ export default function TelaCadastroProduto() {
         id: "",
         codigo: "",
         nome: "",
+        descricao: "",
         preco: "",
         categoria: "",
         estoque: "",

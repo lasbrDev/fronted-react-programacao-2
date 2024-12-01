@@ -1,5 +1,5 @@
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function FormCadFornecedor(props) {
     const [fornecedor, setFornecedor] = useState(props.fornecedorSelecionado);

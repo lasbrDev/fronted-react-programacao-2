@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { atualizarProduto, cadastrarProduto } from "../../services/produtoService";
 
-export default function FormCadProduto(props) {
+export default function FormularioCadProduto(props) {
     const [produto, setProduto] = useState(props.produtoSelecionado);
     const [validado, setValidado] = useState(false);
 
@@ -16,7 +16,7 @@ export default function FormCadProduto(props) {
         setProduto({ ...produto, [nome]: valor });
     }
 
-    async function cadastrar(evento) {
+    function cadastrar(evento) {
         evento.preventDefault();
         const formulario = evento.currentTarget;
         if (formulario.checkValidity()) {
@@ -41,8 +41,10 @@ export default function FormCadProduto(props) {
                         props.atualizarListaProdutos(listaAtualizada);
                         props.setModoEdicao(false);
                         props.setProdutoSelecionado({
+                            id: "",
                             codigo: "",
                             nome: "",
+                            descricao: "",
                             preco: "",
                             categoria: "",
                             estoque: "",
@@ -71,6 +73,7 @@ export default function FormCadProduto(props) {
                         type="text"
                         placeholder="Código"
                         value={produto.codigo}
+                        id="codigo"
                         name="codigo"
                         onChange={alterarProduto}
                     />
@@ -85,6 +88,7 @@ export default function FormCadProduto(props) {
                         type="text"
                         placeholder="Nome"
                         value={produto.nome}
+                        id="nome"
                         name="nome"
                         onChange={alterarProduto}
                     />
@@ -92,48 +96,63 @@ export default function FormCadProduto(props) {
                 </Form.Group>
             </Row>
             <Row className="mb-3">
-                <Form.Group as={Col} md="6">
+                <Form.Group as={Col}>
+                    <Form.Label>Descrição:</Form.Label>
+                    <Form.Control
+                        required
+                        type="text"
+                        placeholder="Descrição"
+                        value={produto.descricao}
+                        id="descricao"
+                        name="descricao"
+                        onChange={alterarProduto}
+                    />
+                    <Form.Control.Feedback type="invalid">Por favor, informe a descrição!</Form.Control.Feedback>
+                </Form.Group>
+            </Row>
+            <Row className="mb-3">
+                <Form.Group as={Col} md="4">
                     <Form.Label>Preço:</Form.Label>
                     <Form.Control
                         required
-                        type="number"
-                        step="0.01"
+                        type="text"
                         placeholder="Preço"
                         value={produto.preco}
+                        id="preco"
                         name="preco"
                         onChange={alterarProduto}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe o preço!</Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="6">
+                <Form.Group as={Col} md="4">
                     <Form.Label>Categoria:</Form.Label>
                     <Form.Control
                         required
                         type="text"
                         placeholder="Categoria"
                         value={produto.categoria}
+                        id="categoria"
                         name="categoria"
                         onChange={alterarProduto}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe a categoria!</Form.Control.Feedback>
                 </Form.Group>
-            </Row>
-            <Row className="mb-3">
-                <Form.Group as={Col}>
+                <Form.Group as={Col} md="4">
                     <Form.Label>Estoque:</Form.Label>
                     <Form.Control
                         required
-                        type="number"
+                        type="text"
                         placeholder="Estoque"
                         value={produto.estoque}
+                        id="estoque"
                         name="estoque"
                         onChange={alterarProduto}
                     />
-                    <Form.Control.Feedback type="invalid">Por favor, informe a quantidade em estoque!</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">Por favor, informe o estoque!</Form.Control.Feedback>
                 </Form.Group>
             </Row>
-            <Button type="submit" className="me-2">{props.modoEdicao ? "Atualizar" : "Cadastrar"}</Button>
-            <Button variant="secondary" onClick={() => props.setExibirTabela(true)}>Voltar</Button>
+            <Button type="submit" className="me-2">{props.modoEdicao ? "Atualizar" : "Cadastrar"}</Button> 
+            <Button variant="secondary" type="button" onClick={() => props.setExibirTabela(true)}>Voltar</Button>
         </Form>
     );
 }

@@ -2,8 +2,7 @@ const urlBase = "http://localhost:4000/api/clientes";
 
 export async function consultarClientes() {
     try {
-        const res = await fetch(urlBase, { 
-            method: "GET" });
+        const res = await fetch(urlBase, { method: "GET" });
         if (!res.ok) {
             const errorMessage = await res.text();
             throw new Error(`Erro ao consultar clientes: ${res.status} - ${errorMessage}`);
@@ -20,7 +19,9 @@ export async function cadastrarCliente(cliente) {
     try {
         const res = await fetch(urlBase, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify(cliente)
         });
         if (!res.ok) {
@@ -28,7 +29,7 @@ export async function cadastrarCliente(cliente) {
             throw new Error(`Erro ao cadastrar cliente: ${res.status} - ${errorMessage}`);
         }
         const dados = await res.json();
-        return { status: true, cliente: dados }; 
+        return { status: true, cliente: dados };
     } catch (error) {
         console.error("Erro na função cadastrarCliente:", error.message);
         return { status: false, mensagem: 'Erro ao cadastrar cliente.' };
@@ -38,7 +39,7 @@ export async function cadastrarCliente(cliente) {
 export async function atualizarCliente(cliente) {
     try {
         const res = await fetch(`${urlBase}/${cliente.id}`, {
-            method: "PUT",
+            method: "PATCH", 
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(cliente)
         });

@@ -2,19 +2,19 @@ import { useState } from "react";
 import { Button, Container, Spinner, Table } from "react-bootstrap";
 import { excluirProduto } from "../../services/produtoService";
 
-export default function TabelaProdutos({
-    setExibirTabela,
-    listaProdutos = [],
-    atualizarListaProdutos,
-    setProdutoSelecionado,
-    setModoEdicao,
+export default function TabelaProdutos({ 
+    setExibirTabela, 
+    listaProdutos = [], 
+    atualizarListaProdutos, 
+    setProdutoSelecionado, 
+    setModoEdicao 
 }) {
     const [loading, setLoading] = useState(false);
-    
-    function escolherProdutoEdicao(produto) {
+
+    const escolherProdutoEdicao = (produto) => {
         setProdutoSelecionado(produto);
         setModoEdicao(true);
-        setExibirTabela(false);    
+        setExibirTabela(false);
     };
 
     const apagarProduto = (id) => {
@@ -40,18 +40,22 @@ export default function TabelaProdutos({
 
     return (
         <Container>
-            <Button className="mt-3 mb-3" onClick={() => {
-                setModoEdicao(false);
-                setProdutoSelecionado({
-                    id: "",
-                    codigo: "",
-                    nome: "",
-                    preco: "",
-                    categoria: "",
-                    estoque: "",
-                });
-                setExibirTabela(false);
-            }}>
+            <Button
+                className="mt-3 mb-3"
+                onClick={() => {
+                    setModoEdicao(false);
+                    setProdutoSelecionado({
+                        id: '',
+                        codigo: '',
+                        nome: '',
+                        descricao: '',
+                        preco: '',
+                        categoria: '',
+                        estoque: '',
+                    });
+                    setExibirTabela(false);
+                }}
+            >
                 Novo Produto
             </Button>
             {loading && <Spinner animation="border" />}
@@ -60,6 +64,7 @@ export default function TabelaProdutos({
                     <tr>
                         <th>Código</th>
                         <th>Nome</th>
+                        <th>Descrição</th>
                         <th>Preço</th>
                         <th>Categoria</th>
                         <th>Estoque</th>
@@ -71,8 +76,9 @@ export default function TabelaProdutos({
                         listaProdutos.map((produto, index) => (
                             produto && produto.id ? (
                                 <tr key={index}>
-                                    <td>{produto.id}</td>
+                                    <td>{produto.codigo}</td>
                                     <td>{produto.nome}</td>
+                                    <td>{produto.descricao}</td>
                                     <td>{produto.preco}</td>
                                     <td>{produto.categoria}</td>
                                     <td>{produto.estoque}</td>
@@ -84,8 +90,8 @@ export default function TabelaProdutos({
                                         >
                                             Apagar
                                         </Button>
-                                        <Button 
-                                            variant="warning" 
+                                        <Button
+                                            variant="warning"
                                             onClick={() => escolherProdutoEdicao(produto)}
                                             className="me-2"
                                         >
@@ -96,15 +102,14 @@ export default function TabelaProdutos({
                             ) : null
                         ))
                     ) : (
-                            <tr>
-                                <td colSpan="6" className="text-center">
-                                    Nenhum produto cadastrado
-                                </td>
-                            </tr>
-                        )}
+                        <tr>
+                            <td colSpan="7" className="text-center">
+                                Nenhum produto cadastrado.
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
             </Table>
         </Container>
     );
 }
-                
