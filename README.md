@@ -1,70 +1,74 @@
-# Getting Started with Create React App
+# Aplicação de Gerenciamento
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Esta é uma aplicação de gerenciamento desenvolvida com React, utilizando JSX para a criação dos componentes. A aplicação permite gerenciar clientes, produtos e fornecedores, com funcionalidades de cadastro, edição e exclusão.
 
-## Available Scripts
+Atividade bimestral desenvolvida para consolidar o aprendizado sobre React e JSX na disciplina de Programação II, do curso de Engenharia de Software da Universidade Unoeste.
 
-In the project directory, you can run:
+## Funcionalidades
 
-### `npm start`
+- **Login**: Tela de login para autenticação de usuários.
+- **Gerenciamento de Clientes**: Cadastro, edição e exclusão de clientes.
+- **Gerenciamento de Produtos**: Cadastro, edição e exclusão de produtos.
+- **Gerenciamento de Fornecedores**: Cadastro, edição e exclusão de fornecedores.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Tecnologias Utilizadas
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **React**: Biblioteca JavaScript para construção de interfaces de usuário.
+- **React Bootstrap**: Biblioteca de componentes Bootstrap para React.
+- **React Router DOM**: Biblioteca para roteamento em aplicações React.
+- **Axios**: Cliente HTTP baseado em Promises para fazer requisições ao backend.
+- **Bootstrap**: Framework CSS para estilização responsiva.
+- **React Scripts**: Scripts e configuração para criar aplicativos React usando Create React App.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Estrutura do Projeto
 
-### `npm run build`
+- **src**
+  - **components**
+    - **FormLogin.jsx**: Componente de formulário de login.
+    - **FormCadCliente.jsx**: Componente de formulário de cadastro de clientes.
+    - **FormCadProduto.jsx**: Componente de formulário de cadastro de produtos.
+    - **FormCadFornecedor.jsx**: Componente de formulário de cadastro de fornecedores.
+    - **TabelaClientes.jsx**: Componente de tabela de clientes.
+    - **TabelaProdutos.jsx**: Componente de tabela de produtos.
+    - **TabelaFornecedores.jsx**: Componente de tabela de fornecedores.
+  - **services**
+    - **clienteService.js**: Serviço para interagir com a API de clientes.
+    - **produtoService.js**: Serviço para interagir com a API de produtos.
+    - **fornecedorService.js**: Serviço para interagir com a API de fornecedores.
+  - **App.jsx**: Componente principal da aplicação.
+  - **index.js**: Ponto de entrada da aplicação.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Dependências
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+As principais dependências utilizadas no projeto são:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```json
+{
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "bootstrap": "^5.3.3",
+    "react": "^18.3.1",
+    "react-bootstrap": "^2.10.5",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.27.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+  }
+}
+```
 
-### `npm run eject`
+## Descrição Detalhada da Aplicação
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#### Login - Gerenciamento de Clientes - Gerenciamento de Produtos
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+A aplicação possui uma tela de login para autenticação de usuários, redirecionando-os ao menu principal após a validação das credenciais. Nas seções de clientes, produtos e fornecedores, é possível realizar operações como cadastro, edição e exclusão de registros, apresentados em tabelas interativas com botões para gerenciamento individual.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Licença
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Este projeto está licenciado sob a [MIT LICENSE](LICENSE).
