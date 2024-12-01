@@ -1,37 +1,71 @@
 const urlBase = "http://localhost:4000/api/produtos";
 
 export async function consultarProdutos() {
-    const res = await fetch(urlBase, { method: "GET" });
-    if (!res.ok) throw new Error("Erro ao consultar produtos");
-    const listaProdutos = await res.json();
-    return listaProdutos;
+    try {
+        const res = await fetch(urlBase, { 
+            method: "GET" });
+        if (!res.ok) {
+            const errorMessage = await res.text();
+            throw new Error(`Erro ao consultar produtos: ${res.status} - ${errorMessage}`);
+        }
+        const dados = await res.json();
+        return dados.produtos;
+    } catch (error) {
+        console.error("Erro na função consultarProdutos:", error.message);
+        throw error;
+    }
 };
 
 export async function cadastrarProduto(produto) {
-    const res = await fetch(urlBase, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(produto),
-    });
-    if (!res.ok) throw new Error("Erro ao cadastrar produto");
-    const novoProduto = await res.json();
-    return novoProduto;
+    try {
+        const res = await fetch(urlBase, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(produto),
+        });
+        if (!res.ok) {
+            const errorMessage = await res.text();
+            throw new Error(`Erro ao cadastrar produto: ${res.status} - ${errorMessage}`);
+        }
+        const dados = await res.json();
+        return { status: true, produto: dados };
+    } catch (error) {
+        console.error("Erro na função cadastrarProduto:", error.message);
+        return { status: false, mensagem: 'Erro ao cadastrar produto.' };
+    }
 };
 
 export async function atualizarProduto(produto) {
-    const res = await fetch(urlBase, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(produto),
-    });
-    if (!res.ok) throw new Error("Erro ao atualizar produto");
-    const produtoAtualizado = await res.json();
-    return produtoAtualizado;
+    try {
+        const res = await fetch(`${urlBase}/${produto.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(produto),
+        });
+        if (!res.ok) {
+            const errorMessage = await res.text();
+            throw new Error(`Erro ao atualizar produto: ${res.status} - ${errorMessage}`);
+        }
+        const dados = await res.json();
+        return { status: true, produtos: dados };
+    } catch (error) {
+        console.error("Erro na função atualizarProduto:", error.message);
+        return { status: false, mensagem: 'Erro ao atualizar produto.' };
+    }
 };
 
 export async function excluirProduto(codigo) {
-    const res = await fetch(`${urlBase}/${codigo}`, { method: "DELETE" });
-    if (!res.ok) throw new Error("Erro ao excluir produto");
-    const produtoExcluido = await res.json();
-    return produtoExcluido;
+    try {
+        const res = await fetch(`${urlBase}/${codigo}`, {
+            method: "DELETE",
+        });
+        if (!res.ok) {
+            const errorMessage = await res.text();
+            throw new Error(`Erro ao excluir produto: ${res.status} - ${errorMessage}`);
+        }
+        return { status: true };
+    } catch (error) {
+        console.error("Erro na função excluirProduto:", error.message);
+        return { status: false, mensagem: 'Erro ao excluir produto.' };
+    }
 };

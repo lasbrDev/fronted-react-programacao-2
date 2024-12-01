@@ -40,22 +40,19 @@ export default function TabelaClientes({
 
     return (
         <Container>
-            <Button
-                className="mt-3 mb-3"
-                onClick={() => {
-                    setModoEdicao(false);
-                    setClienteSelecionado({
-                        id: '',
-                        cpf: '',
-                        nomeCompleto: '',
-                        endereco: '',
-                        cidade: '',
-                        estado: '',
-                        cep: '',
-                    });
-                    setExibirTabela(false);
-                }}
-            >
+            <Button className="mt-3 mb-3" onClick={() => {
+                setModoEdicao(false);
+                setClienteSelecionado({
+                    id: '',
+                    cpf: '',
+                    nomeCompleto: '',
+                    endereco: '',
+                    cidade: '',
+                    estado: '',
+                    cep: '',
+                });
+                setExibirTabela(false);
+            }}>
                 Novo Cliente
             </Button>
             {loading && <Spinner animation="border" />}

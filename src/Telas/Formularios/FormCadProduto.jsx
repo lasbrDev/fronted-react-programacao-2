@@ -1,57 +1,68 @@
+import { useEffect, useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { useState } from "react";
-import { cadastrarProduto, atualizarProduto } from "../../services/produtoService"
+import { atualizarProduto, cadastrarProduto } from "../../services/produtoService";
 
 export default function FormCadProduto(props) {
     const [produto, setProduto] = useState(props.produtoSelecionado);
     const [validado, setValidado] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
 
-    function atualizarProdutoState(evento) {
-        const { name, value } = evento.target;
-        setProduto({ ...produto, [name]: value });
+    useEffect(() => {
+        setProduto(props.produtoSelecionado);
+    }, [props.produtoSelecionado]);
+
+    function alterarProduto(evento) {
+        const nome = evento.target.name;
+        const valor = evento.target.value;
+        setProduto({ ...produto, [nome]: valor });
     }
 
     async function cadastrar(evento) {
         evento.preventDefault();
-        evento.stopPropagation();
-
         const formulario = evento.currentTarget;
         if (formulario.checkValidity()) {
             setValidado(false);
-            setLoading(true);
-            try {
-                if (!props.modoEdicao) {
-                    // Cadastrar um novo produto
-                    await cadastrarProduto(produto);
-                    props.setExibirTabela(true);
-                } else {
-                    // Atualizar um produto existente
-                    await atualizarProduto(produto);
-                    props.setModoEdicao(false);
-                    props.setProdutoSelecionado({
-                        codigo: "",
-                        nome: "",
-                        preco: "",
-                        categoria: "",
-                        estoque: "",
-                    });
-                    props.setExibirTabela(true);
-                }
-            } catch (erro) {
-                setError("Erro ao salvar o produto. Tente novamente mais tarde.");
-            } finally {
-                setLoading(false);
+            if (!props.modoEdicao) {
+                cadastrarProduto(produto).then((resposta) => {
+                    if (resposta.status) {
+                        props.atualizarListaProdutos([...props.listaProdutos, resposta.produto]);
+                        props.setExibirTabela(true);
+                    } else {
+                        alert(resposta.mensagem);
+                    }
+                }).catch((erro) => {
+                    alert("Não foi possível se comunicar com o servidor:" + erro.message);
+                });
+            } else {
+                atualizarProduto(produto).then((resposta) => {
+                    if (resposta.status) {
+                        const listaAtualizada = props.listaProdutos.map(prod => 
+                            prod.id === produto.id ? resposta.produto : prod
+                        );
+                        props.atualizarListaProdutos(listaAtualizada);
+                        props.setModoEdicao(false);
+                        props.setProdutoSelecionado({
+                            codigo: "",
+                            nome: "",
+                            preco: "",
+                            categoria: "",
+                            estoque: "",
+                        });
+                        props.setExibirTabela(true);
+                    } else {
+                        alert(resposta.mensagem);
+                    }
+                }).catch((erro) => {
+                    alert("Não foi possível se comunicar com o backend: " + erro.message);
+                });
             }
         } else {
             setValidado(true);
         }
+        evento.stopPropagation();
     }
 
     return (
         <Form validated={validado} className="border p-2" noValidate onSubmit={cadastrar}>
-            {error && <div className="alert alert-danger">{error}</div>}
             <Row className="mb-3">
                 <Form.Group as={Col} md="4">
                     <Form.Label>Código:</Form.Label>
@@ -61,7 +72,7 @@ export default function FormCadProduto(props) {
                         placeholder="Código"
                         value={produto.codigo}
                         name="codigo"
-                        onChange={atualizarProdutoState}
+                        onChange={alterarProduto}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe o código!</Form.Control.Feedback>
                 </Form.Group>
@@ -75,7 +86,7 @@ export default function FormCadProduto(props) {
                         placeholder="Nome"
                         value={produto.nome}
                         name="nome"
-                        onChange={atualizarProdutoState}
+                        onChange={alterarProduto}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe o nome!</Form.Control.Feedback>
                 </Form.Group>
@@ -90,7 +101,7 @@ export default function FormCadProduto(props) {
                         placeholder="Preço"
                         value={produto.preco}
                         name="preco"
-                        onChange={atualizarProdutoState}
+                        onChange={alterarProduto}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe o preço!</Form.Control.Feedback>
                 </Form.Group>
@@ -102,7 +113,7 @@ export default function FormCadProduto(props) {
                         placeholder="Categoria"
                         value={produto.categoria}
                         name="categoria"
-                        onChange={atualizarProdutoState}
+                        onChange={alterarProduto}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe a categoria!</Form.Control.Feedback>
                 </Form.Group>
@@ -116,17 +127,13 @@ export default function FormCadProduto(props) {
                         placeholder="Estoque"
                         value={produto.estoque}
                         name="estoque"
-                        onChange={atualizarProdutoState}
+                        onChange={alterarProduto}
                     />
                     <Form.Control.Feedback type="invalid">Por favor, informe a quantidade em estoque!</Form.Control.Feedback>
                 </Form.Group>
             </Row>
-            <Button type="submit" disabled={loading}>
-                {loading ? "Carregando..." : props.modoEdicao ? "Atualizar" : "Cadastrar"}
-            </Button>{" "}
-            <Button variant="secondary" onClick={() => props.setExibirTabela(true)}>
-                Voltar
-            </Button>
+            <Button type="submit" className="me-2">{props.modoEdicao ? "Atualizar" : "Cadastrar"}</Button>
+            <Button variant="secondary" onClick={() => props.setExibirTabela(true)}>Voltar</Button>
         </Form>
     );
 }

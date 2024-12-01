@@ -1,32 +1,60 @@
-import { Button, Container, Table } from "react-bootstrap";
+import { useState } from "react";
+import { Button, Container, Spinner, Table } from "react-bootstrap";
+import { excluirProduto } from "../../services/produtoService";
 
-export default function TabelaProdutos(props) {
+export default function TabelaProdutos({
+    setExibirTabela,
+    listaProdutos = [],
+    atualizarListaProdutos,
+    setProdutoSelecionado,
+    setModoEdicao,
+}) {
+    const [loading, setLoading] = useState(false);
+    
     function escolherProdutoEdicao(produto) {
-        props.setProdutoSelecionado(produto);
-        props.setModoEdicao(true);
-        props.setExibirTabela(false);
-    }
+        setProdutoSelecionado(produto);
+        setModoEdicao(true);
+        setExibirTabela(false);    
+    };
 
-    function apagarProduto(codigo) {
+    const apagarProduto = (id) => {
         if (window.confirm("Tem certeza que deseja apagar o produto?")) {
-            const listaNova = props.listaProdutos.filter(prod => prod.codigo !== codigo);
-            props.setListaProdutos(listaNova);
+            setLoading(true);
+            excluirProduto(id)
+                .then((resposta) => {
+                    if (resposta.status) {
+                        const listaNova = listaProdutos.filter((produto) => produto.id !== id);
+                        atualizarListaProdutos(listaNova);
+                    } else {
+                        alert(resposta.mensagem);
+                    }
+                })
+                .catch((erro) => {
+                    alert("Erro ao se comunicar com o backend: " + erro.message);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
         }
-    }
+    };
 
     return (
         <Container>
             <Button className="mt-3 mb-3" onClick={() => {
-                props.setModoEdicao(false);
-                props.setProdutoSelecionado({
+                setModoEdicao(false);
+                setProdutoSelecionado({
+                    id: "",
                     codigo: "",
                     nome: "",
                     preco: "",
                     categoria: "",
                     estoque: "",
                 });
-                props.setExibirTabela(false);
-            }}>Novo Produto</Button>
+                setExibirTabela(false);
+            }}>
+                Novo Produto
+            </Button>
+            {loading && <Spinner animation="border" />}
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -39,21 +67,44 @@ export default function TabelaProdutos(props) {
                     </tr>
                 </thead>
                 <tbody>
-                    {props.listaProdutos.map(produto => (
-                        <tr key={produto.codigo}>
-                            <td>{produto.codigo}</td>
-                            <td>{produto.nome}</td>
-                            <td>{produto.preco}</td>
-                            <td>{produto.categoria}</td>
-                            <td>{produto.estoque}</td>
-                            <td>
-                                <Button variant="warning" onClick={() => escolherProdutoEdicao(produto)}>Editar</Button>{" "}
-                                <Button variant="danger" onClick={() => apagarProduto(produto.codigo)}>Excluir</Button>
-                            </td>
-                        </tr>
-                    ))}
+                    {listaProdutos.length > 0 ? (
+                        listaProdutos.map((produto, index) => (
+                            produto && produto.id ? (
+                                <tr key={index}>
+                                    <td>{produto.id}</td>
+                                    <td>{produto.nome}</td>
+                                    <td>{produto.preco}</td>
+                                    <td>{produto.categoria}</td>
+                                    <td>{produto.estoque}</td>
+                                    <td>
+                                        <Button 
+                                            variant="danger" 
+                                            onClick={() => apagarProduto(produto.id)}
+                                            className="me-2"
+                                        >
+                                            Apagar
+                                        </Button>
+                                        <Button 
+                                            variant="warning" 
+                                            onClick={() => escolherProdutoEdicao(produto)}
+                                            className="me-2"
+                                        >
+                                            Editar
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ) : null
+                        ))
+                    ) : (
+                            <tr>
+                                <td colSpan="6" className="text-center">
+                                    Nenhum produto cadastrado
+                                </td>
+                            </tr>
+                        )}
                 </tbody>
             </Table>
         </Container>
     );
 }
+                
